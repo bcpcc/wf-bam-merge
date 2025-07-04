@@ -1,0 +1,56 @@
+Unable to find image 'ontresearch/wf-common:sha72f3517dd994984e0e2da0b97cb3f23f8540be4b' locally
+sha72f3517dd994984e0e2da0b97cb3f23f8540be4b: Pulling from ontresearch/wf-common
+4f4fb700ef54: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+62bef5ed39af: Pulling fs layer
+d8f325d2dc1e: Pulling fs layer
+60b3068d1dd4: Pulling fs layer
+877abc13906c: Pulling fs layer
+c58e2df5d2d3: Pulling fs layer
+7debc4702cc6: Pulling fs layer
+7b2637cc69e6: Pulling fs layer
+10c8b6e2ba80: Pulling fs layer
+ba985b6ad0a1: Pulling fs layer
+7f5240ac864d: Pulling fs layer
+0ece725ecc46: Pulling fs layer
+7f5240ac864d: Pulling fs layer
+baf32fbbe82f: Pulling fs layer
+920223a50678: Pulling fs layer
+3a6e2a4df6eb: Pulling fs layer
+d647006d6f95: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+7b2637cc69e6: Download complete
+7debc4702cc6: Download complete
+4f4fb700ef54: Download complete
+d647006d6f95: Download complete
+7f5240ac864d: Download complete
+62bef5ed39af: Download complete
+60b3068d1dd4: Download complete
+920223a50678: Download complete
+c58e2df5d2d3: Download complete
+ba985b6ad0a1: Download complete
+d8f325d2dc1e: Download complete
+3a6e2a4df6eb: Download complete
+baf32fbbe82f: Download complete
+877abc13906c: Download complete
+10c8b6e2ba80: Download complete
+7debc4702cc6: Pull complete
+7f5240ac864d: Pull complete
+d8f325d2dc1e: Pull complete
+baf32fbbe82f: Pull complete
+877abc13906c: Pull complete
+10c8b6e2ba80: Pull complete
+7b2637cc69e6: Pull complete
+d647006d6f95: Pull complete
+62bef5ed39af: Pull complete
+60b3068d1dd4: Pull complete
+920223a50678: Pull complete
+c58e2df5d2d3: Pull complete
+ba985b6ad0a1: Pull complete
+3a6e2a4df6eb: Pull complete
+0ece725ecc46: Download complete
+4f4fb700ef54: Pull complete
+0ece725ecc46: Pull complete
+Digest: sha256:035def9554cd3dde0b5591cfabd64082f7a45f7333777e4a8fd9b1f46daa51fd
+Status: Downloaded newer image for ontresearch/wf-common:sha72f3517dd994984e0e2da0b97cb3f23f8540be4b

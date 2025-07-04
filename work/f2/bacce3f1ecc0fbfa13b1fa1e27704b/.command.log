@@ -1,0 +1,26 @@
+Unable to find image 'ontresearch/wf-common:sha72f3517dd994984e0e2da0b97cb3f23f8540be4b' locally
+sha72f3517dd994984e0e2da0b97cb3f23f8540be4b: Pulling from ontresearch/wf-common
+Error response from daemon: No such container: nxf-hWQ216fGStkzrvF0DmDRF0ZY
+4f4fb700ef54: Pulling fs layer
+10c8b6e2ba80: Pulling fs layer
+62bef5ed39af: Pulling fs layer
+7f5240ac864d: Pulling fs layer
+d647006d6f95: Pulling fs layer
+d8f325d2dc1e: Pulling fs layer
+7f5240ac864d: Pulling fs layer
+0ece725ecc46: Pulling fs layer
+877abc13906c: Pulling fs layer
+920223a50678: Pulling fs layer
+baf32fbbe82f: Pulling fs layer
+7debc4702cc6: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+60b3068d1dd4: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+3a6e2a4df6eb: Pulling fs layer
+ba985b6ad0a1: Pulling fs layer
+7b2637cc69e6: Pulling fs layer
+c58e2df5d2d3: Pulling fs layer
+docker: failed to copy: httpReadSeeker: failed open: failed to do request: Get "https://registry-1.docker.io/v2/ontresearch/wf-common/blobs/sha256:7f5240ac864d1a294f0100e17edc0a426822539938aae81cd953880b73783d84": EOF
+
+Run 'docker run --help' for more information

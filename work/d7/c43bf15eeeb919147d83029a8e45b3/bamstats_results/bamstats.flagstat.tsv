@@ -1,0 +1,2 @@
+ref	sample_name	total	primary	secondary	supplementary	unmapped	qcfail	duplicate	duplex	duplex_forming
+*	unaligned_bams	5000	0	0	0	5000	0	0	0	0
