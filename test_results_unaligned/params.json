@@ -11,11 +11,8 @@
     "aws_image_prefix": null,
     "aws_queue": null,
     "disable_ping": false,
-    "analyse_unclassified": false,
-    "analyse_fail": false,
-    "watch_path": false,
     "monochrome_logs": false,
-    "validate_params": false,
+    "validate_params": true,
     "show_hidden_params": false,
     "schema_ignore_params": "show_hidden_params,validate_params,monochrome_logs,aws_queue,aws_image_prefix,wf,store_dir",
     "wf": {

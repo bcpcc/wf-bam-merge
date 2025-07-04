@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema",
     "$id": "https://raw.githubusercontent.com/epi2me-labs/wf-bam-merge/master/nextflow_schema.json",
     "title": "epi2me-labs/wf-bam-merge",
-    "description": "BAM file merging workflow using samtools merge/cat.",
+    "description": "BAM file merging workflow using samtools merge/cat",
     "type": "object",
     "definitions": {
         "input": {
@@ -29,7 +29,14 @@
                     "default": false,
                     "description": "Sort BAM files before merging.",
                     "help_text": "Sorts BAM files before concatenation."
-                }
+                },
+                "client_fields": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "A JSON file of key value pairs to display on the report.",
+                    "help_text": "This is used to populate a table of additional information (for example, about upstream components of an assay) to the workflow report.",
+                    "hidden": true
+                },
             },
             "required": ["bam"]
         },
@@ -65,11 +72,85 @@
                     "description": "Directory for output of all workflow results."
                 }
             }
+        },
+        "advanced_options": {
+            "title": "Advanced Options",
+            "type": "object",
+            "fa_icon": "far fa-question-circle",
+            "description": "Advanced options for configuring processes inside the workflow.",
+            "help_text": "These advanced options do not need to be changed for typical use, but allow fine tuning of workflows for users who want more control over the workflow.",
+            "properties": {}
+        },
+        "misc": {
+            "title": "Miscellaneous Options",
+            "type": "object",
+            "description": "Everything else.",
+            "default": "",
+            "properties": {
+                "disable_ping": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable to prevent sending a workflow ping.",
+                    "overrides": {
+                        "epi2mecloud": {
+                            "hidden": true
+                        }
+                    }
+                },
+                "help": {
+                    "type": "boolean",
+                    "description": "Display help text.",
+                    "fa_icon": "fas fa-question-circle",
+                    "default": false,
+                    "hidden": true
+                },
+                "version": {
+                    "type": "boolean",
+                    "description": "Display version and exit.",
+                    "fa_icon": "fas fa-question-circle",
+                    "default": false,
+                    "hidden": true
+                }
+            }
         }
     },
     "allOf": [
-        {"$ref": "#/definitions/input"},
-        {"$ref": "#/definitions/samples"},
-        {"$ref": "#/definitions/output"}
-    ]
+            {"$ref": "#/definitions/input"},
+            {"$ref": "#/definitions/samples"},
+            {"$ref": "#/definitions/output"},
+            {"$ref": "#/definitions/advanced_options"},
+            {"$ref": "#/definitions/misc"}
+    ],
+    "properties": {
+        "aws_image_prefix": {
+            "type": "string",
+            "hidden": true
+        },
+        "aws_queue": {
+            "type": "string",
+            "hidden": true
+        },
+        "monochrome_logs": {
+            "type": "boolean"
+        },
+        "validate_params": {
+            "type": "boolean",
+            "default": true
+        },
+        "show_hidden_params": {
+            "type": "boolean"
+        }
+    },
+    "resources": {
+        "recommended": {
+            "cpus": 2,
+            "memory": "2GB"
+        },
+        "minimum": {
+            "cpus": 2,
+            "memory": "2GB"
+        },
+        "run_time": "5 minutes per sample",
+        "arm_support": true 
+    }
 }

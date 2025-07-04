@@ -6,7 +6,6 @@ nextflow.enable.dsl = 2
 include { xam_ingress } from './lib/ingress'
 include { getParams } from './lib/common'
 
-// Unsure what the optional file is, so we define it as a placeholder
 OPTIONAL_FILE = file("$projectDir/data/OPTIONAL_FILE")
 
 process getVersions {
@@ -202,8 +201,8 @@ workflow pipeline {
     bam_data
     
     main:
-    client_fields = params.client_fields && file(params.client_fields).exists() ? 
-        file(params.client_fields) : OPTIONAL_FILE
+    client_fields = params.client_fields && file(params.client_fields).exists() ? file(params.client_fields) : OPTIONAL_FILE
+        
     
     software_versions = getVersions()
     workflow_params = getParams()
@@ -302,11 +301,8 @@ workflow {
         "input": params.bam,
         "sample": params.sample,
         "sample_sheet": params.sample_sheet,
-        "analyse_unclassified": params.analyse_unclassified,
-        "analyse_fail": params.analyse_fail,
         "keep_unaligned": params.wf.keep_unaligned,
         "stats": params.wf.bamstats,
-        "watch_path": params.wf.watch_path,
         "return_fastq": false,  // We want BAM output
         "fastq_chunk": null,
         "per_read_stats": params.wf.per_read_stats,
