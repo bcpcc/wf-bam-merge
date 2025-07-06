@@ -1,0 +1,3 @@
+[18:38:10 - workflow_glue] Bootstrapping CLI.
+[18:38:10 - workflow_glue] Starting entrypoint.
+[18:38:10 - workflow_glue.checkBamHd] Checked (u)BAM headers in 'input_dir'.

@@ -6,3 +6,5 @@ template-workflow
 *.pyc
 *.pyo
 .DS_store
+
+test_results*/

@@ -70,6 +70,29 @@
                     "default": "output",
                     "format": "directory-path",
                     "description": "Directory for output of all workflow results."
+                },
+                "ingress_results_dir": {
+                    "type": "string",
+                    "default": "merged_bams",
+                    "description": "Name of subdirectory for input processing results.",
+                    "help_text": "Subdirectory name within out_dir for storing input processing results."
+                },
+                "output_prefix": {
+                    "type": "string",
+                    "description": "Custom prefix for output files (defaults to sample name).",
+                    "help_text": "If not specified, the sample name/alias will be used as the prefix."
+                },
+                "include_alignment_status": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include alignment status in output filename.",
+                    "help_text": "Adds '.aligned' or '.unaligned' to the filename."
+                },
+                "include_date": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include current date in output filename.",
+                    "help_text": "Adds current date in YYYYMMDD format to filename."
                 }
             }
         },

@@ -21,7 +21,6 @@ process getVersions {
     echo "samtools,\$(samtools --version | head -n1 | cut -d' ' -f2)" >> versions.txt
     """
 }
-
 process SAMTOOLS_MERGE_ALIGNED {
     label "wf_bam_merge"
     publishDir "${params.out_dir}/merged_bams", mode: 'copy'
@@ -30,27 +29,28 @@ process SAMTOOLS_MERGE_ALIGNED {
     tuple val(meta), path(bams), path(indices)
     
     output:
-    tuple val(meta), path("${meta.alias}.merged.bam"), path("${meta.alias}.merged.bam.bai"), emit: merged_bam
+    tuple val(meta), path("*.merged.bam"), path("*.merged.bam.bai"), emit: merged_bam
     
     when:
     bams.size() > 1 && params.alignment_status == 'aligned'
     
     script:
-    def args = task.ext.args ?: ''
+    // Build output name with sample as default prefix
+    def sample_name = sample ?: meta.alias ?: meta.id ?: "sample"
+    def custom_prefix = params.output_prefix ?: sample_name
+    def alignment_suffix = params.include_alignment_status ? ".aligned" : ""
+    def date_suffix = params.include_date ? ".${new Date().format('yyyyMMdd')}" : ""
+    def output_name = "${custom_prefix}${alignment_suffix}${date_suffix}.merged.bam"
     
     """
-    # Merge aligned BAM files with samtools merge (coordinate-based merging)
+    # Merge aligned BAM files with samtools merge
     samtools merge \\
         -@ ${task.cpus} \\
-        ${args} \\
-        ${meta.alias}.merged.aligned.bam \\
+        ${output_name} \\
         ${bams.join(' ')}
     
-    # Create final output link
-    ln -s ${meta.alias}.merged.aligned.bam ${meta.alias}.merged.bam
-    
     # Index the merged BAM
-    samtools index -@ ${task.cpus} ${meta.alias}.merged.bam
+    samtools index -@ ${task.cpus} ${output_name}
     """
 }
 
@@ -62,26 +62,27 @@ process SAMTOOLS_CAT_UNALIGNED {
     tuple val(meta), path(bams), path(indices)
     
     output:
-    tuple val(meta), path("${meta.alias}.merged.bam"), path("${meta.alias}.merged.bam.bai"), emit: merged_bam
+    tuple val(meta), path("*.merged.bam"), path("*.merged.bam.bai"), emit: merged_bam
     
     when:
     bams.size() > 1 && params.alignment_status == 'unaligned'
     
     script:
-    def args = task.ext.args ?: ''
+    // Build output name with sample as default prefix
+    def sample_name = sample ?: meta.alias ?: meta.id ?: "sample"
+    def custom_prefix = params.output_prefix ?: sample_name
+    def alignment_suffix = params.include_alignment_status ? ".unaligned" : ""
+    def date_suffix = params.include_date ? ".${new Date().format('yyyyMMdd')}" : ""
+    def output_name = "${custom_prefix}${alignment_suffix}${date_suffix}.merged.bam"
     
     """
-    # Concatenate unaligned BAM files with samtools cat (simple concatenation)
+    # Concatenate unaligned BAM files with samtools cat
     samtools cat \\
-        ${args} \\
-        -o ${meta.alias}.merged.unaligned.bam \\
+        -o ${output_name} \\
         ${bams.join(' ')}
     
-    # Create final output link
-    ln -s ${meta.alias}.merged.unaligned.bam ${meta.alias}.merged.bam
-    
-    # Index the merged BAM (even unaligned BAMs can be indexed)
-    samtools index -@ ${task.cpus} ${meta.alias}.merged.bam
+    # Index the merged BAM
+    samtools index -@ ${task.cpus} ${output_name}
     """
 }
 
@@ -207,6 +208,7 @@ workflow pipeline {
     software_versions = getVersions()
     workflow_params = getParams()
     
+    
     // Group BAM files by sample for merging
     grouped_bams = bam_data
         .map { meta, bam, bai, stats -> 
@@ -314,7 +316,7 @@ workflow {
     
     // Publish results (following EPI2ME pattern)
     ch_to_publish = pipeline.out.ingress_results
-        | map { [it, "bam_ingress_results"] }
+        | map { [it, params.ingress_results_dir] }
     
     ch_to_publish | publish
 }
