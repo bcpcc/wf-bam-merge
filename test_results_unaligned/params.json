@@ -3,7 +3,7 @@
     "version": false,
     "bam": "test_data/unaligned_bams/",
     "out_dir": "test_results_unaligned",
-    "sample": "MyTest",
+    "sample": "MyTest3",
     "sample_sheet": null,
     "output_prefix": null,
     "ingress_results_dir": "merged_bams",

@@ -36,7 +36,7 @@ process SAMTOOLS_MERGE_ALIGNED {
     
     script:
     // Build output name with sample as default prefix
-    def sample_name = sample ?: meta.alias ?: meta.id ?: "sample"
+    def sample_name = params.sample ?: meta.alias ?: meta.id ?: "sample"
     def custom_prefix = params.output_prefix ?: sample_name
     def alignment_suffix = params.include_alignment_status ? ".aligned" : ""
     def date_suffix = params.include_date ? ".${new Date().format('yyyyMMdd')}" : ""
@@ -69,7 +69,7 @@ process SAMTOOLS_CAT_UNALIGNED {
     
     script:
     // Build output name with sample as default prefix
-    def sample_name = sample ?: meta.alias ?: meta.id ?: "sample"
+    def sample_name = params.sample ?: meta.alias ?: meta.id ?: "sample"
     def custom_prefix = params.output_prefix ?: sample_name
     def alignment_suffix = params.include_alignment_status ? ".unaligned" : ""
     def date_suffix = params.include_date ? ".${new Date().format('yyyyMMdd')}" : ""
@@ -208,6 +208,20 @@ workflow pipeline {
     software_versions = getVersions()
     workflow_params = getParams()
     
+    // CRITICAL FIX: Override sample names with --sample parameter
+    fixed_bam_data = bam_data
+        .map { meta, bam, bai, stats ->
+            def new_meta = meta.clone()
+            // If --sample parameter is provided, use it; otherwise keep original
+            if (params.sample) {
+                new_meta.alias = params.sample
+                new_meta.id = params.sample
+                new_meta.barcode = params.sample
+            }
+            // Debug output
+            log.info "Sample name: ${new_meta.alias}, BAM: ${bam.name}"
+            [new_meta, bam, bai, stats]
+        }
     
     // Group BAM files by sample for merging
     grouped_bams = bam_data
@@ -278,7 +292,7 @@ workflow pipeline {
         workflow.manifest.version
     )
     
-    // Collect ingress results (following EPI2ME pattern)
+    // Collect ingrßess results (following EPI2ME pattern)
     bam_data
         | map { meta, bam, bai, stats ->
             [meta, bam ?: OPTIONAL_FILE, bai ?: OPTIONAL_FILE, stats ?: OPTIONAL_FILE]
