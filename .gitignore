@@ -7,8 +7,7 @@ template-workflow
 *.pyo
 .DS_store
 
-test_results*/
-test_results*/*
+test_results*
 work*/
 test_results_unaligned/params.json
 test_results_unaligned/execution/report.html

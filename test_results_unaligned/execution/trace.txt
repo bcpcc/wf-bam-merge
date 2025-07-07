@@ -1,8 +1,0 @@
-task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
-2	2b/6f188f	59685	pipeline:getParams	COMPLETED	0	2025-07-06 15:40:44.404	229ms	7ms	0.0%	2.2 MB	3.4 MB	34.1 KB	1.3 KB
-1	8e/9794b5	59679	pipeline:getVersions	COMPLETED	0	2025-07-06 15:40:44.399	299ms	6ms	107.7%	2.1 MB	3.4 MB	75.5 KB	2.6 KB
-3	20/9cafae	59689	checkBamHeaders (1)	COMPLETED	0	2025-07-06 15:40:44.408	465ms	190ms	90.5%	8.7 MB	13 MB	1.7 MB	1.2 MB
-4	48/3bc36d	59757	catSortBams (1)	COMPLETED	0	2025-07-06 15:40:44.886	1.7s	1.4s	203.4%	149.7 MB	1.9 GB	91.4 MB	91.4 MB
-5	d4/289d05	59797	bamstats (1)	COMPLETED	0	2025-07-06 15:40:46.582	409ms	183ms	219.6%	94 MB	551.2 MB	45.8 MB	923 KB
-6	1f/06898e	59823	pipeline:collectIngressResultsInDir (1)	COMPLETED	0	2025-07-06 15:40:47.011	238ms	5ms	0.0%	2.2 MB	3.4 MB	37.8 KB	497 B
-7	c5/08745d	59854	publish (1)	COMPLETED	0	2025-07-06 15:40:47.259	213ms	1ms	0.0%	0	0	32.8 KB	186 B
