@@ -198,7 +198,7 @@ process renameBamFiles {
     def custom_prefix = params.output_prefix ?: sample_name
     def alignment_suffix = params.include_alignment_status ? (params.alignment_status == 'aligned' ? ".aligned" : ".unaligned") : ""
     def date_suffix = params.include_date ? ".${new Date().format('yyyyMMdd')}" : ""
-    def output_name = "${custom_prefix}${alignment_suffix}${date_suffix}.bam"
+    def output_name = "${custom_prefix}${alignment_suffix}${date_suffix}.merged.bam"
     
     """
     echo "Renaming BAM file from ${bam} to ${output_name}"
