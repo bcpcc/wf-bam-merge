@@ -222,7 +222,7 @@ workflow pipeline {
     software_versions = getVersions()
     workflow_params = getParams()
     
-    // CRITICAL FIX: Override sample names with --sample parameter
+    // CRITICAL FIX: Override sample names with --sample parameter and rename BAM files
     fixed_bam_data = bam_data
         .map { meta, bam, bai, stats ->
             def new_meta = [:]
@@ -241,28 +241,43 @@ workflow pipeline {
             [new_meta, bam, bai, stats]
         }
     
-    // Group BAM files by sample for merging
-    grouped_bams = bam_data
+    // Rename BAM files with custom naming scheme
+    renamed_bam_data = renameBamFiles(fixed_bam_data)
+
+     // Group renamed BAM files by sample for merging
+    grouped_bams = renamed_bam_data.renamed_bam
         .map { meta, bam, bai, stats -> 
             // Group by alias, collect BAMs and indices separately
             [meta.alias, meta, bam, bai, stats]
         }
         .groupTuple(by: 0)
-        .map { alias, metas, bams, bais, stats ->
+           .map { alias, metas, bams, bais, stats ->
             // Take the first meta (they should be the same for grouped samples)
             // Filter out null values and create proper collections
             def clean_bams = bams.findAll { it != null }
             def clean_bais = bais.findAll { it != null }
             [metas[0], clean_bams, clean_bais, stats[0]]
         }
-        .filter { meta, bams, bais, stats -> 
-            bams.size() > 1  // Only process if multiple BAMs to merge
+    
+    // Split into single BAMs and multiple BAMs for different handling
+    grouped_bams_branched = grouped_bams.branch { meta, bams, bais, stats ->
+        single_bam: bams.size() == 1
+        multiple_bams: bams.size() > 1
+    }
+    
+    // For single BAMs, just publish them directly (they're already renamed)
+    single_bam_results = grouped_bams_branched.single_bam
+        .map { meta, bams, bais, stats ->
+            [meta, bams[0], bais[0]]
         }
     
-    // Sort BAMs if needed)
+    // Only merge if multiple BAMs
+    merge_candidates = grouped_bams_branched.multiple_bams
+    
+     // Sort BAMs if needed
     if (params.sort_before_merge) {
         // Flatten for individual sorting, then regroup
-        sorted_bams = grouped_bams
+        sorted_bams = merge_candidates
             .flatMap { meta, bams, bais, stats ->
                 bams.withIndex().collect { bam, idx -> 
                     [meta + [sort_index: idx], bam, bais[idx] ?: OPTIONAL_FILE]
@@ -281,15 +296,18 @@ workflow pipeline {
         
         merge_input = sorted_bams
     } else {
-        merge_input = grouped_bams
+        merge_input = merge_candidates
     }
     
-    // Merge BAM files using appropriate method based on alignment status
+      // Merge BAM files using appropriate method based on alignment status
     if (params.alignment_status == 'aligned') {
         merged_results = SAMTOOLS_MERGE_ALIGNED(merge_input)
     } else {
         merged_results = SAMTOOLS_CAT_UNALIGNED(merge_input)
     }
+    
+    // Combine single BAMs and merged BAMs for final results
+    all_final_bams = single_bam_results.mix(merged_results.merged_bam)
     
     // Prepare data for reporting
     for_report = merged_results.merged_bam
@@ -310,15 +328,15 @@ workflow pipeline {
         workflow.manifest.version
     )
     
-    // Collect ingress results (following EPI2ME pattern)
-    bam_data
+    // Collect ingress results (following EPI2ME pattern) - use renamed BAM data
+    renamed_bam_data.renamed_bam
         | map { meta, bam, bai, stats ->
             [meta, bam ?: OPTIONAL_FILE, bai ?: OPTIONAL_FILE, stats ?: OPTIONAL_FILE]
         }
         | collectIngressResultsInDir
-    
+
     emit:
-    merged_bams = merged_results.merged_bam
+    final_bams = all_final_bams
     ingress_results = collectIngressResultsInDir.out
     report
     telemetry = workflow_params
