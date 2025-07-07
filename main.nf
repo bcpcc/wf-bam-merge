@@ -183,6 +183,43 @@ process publish {
     echo "Publishing output files"
     """
 }
+process renameBamFiles {
+    label "wf_bam_merge"
+    
+    input:
+    tuple val(meta), path(bam), path(bai), path(stats)
+    
+    output:
+    tuple val(meta), path("*.bam"), path("*.bam.bai"), path(stats), emit: renamed_bam
+    
+    script:
+    // Build custom filename based on parameters
+    def sample_name = params.sample ?: meta.alias ?: meta.id ?: "sample"
+    def custom_prefix = params.output_prefix ?: sample_name
+    def alignment_suffix = params.include_alignment_status ? (params.alignment_status == 'aligned' ? ".aligned" : ".unaligned") : ""
+    def date_suffix = params.include_date ? ".${new Date().format('yyyyMMdd')}" : ""
+    def output_name = "${custom_prefix}${alignment_suffix}${date_suffix}.bam"
+    
+    """
+    echo "Renaming BAM file from ${bam} to ${output_name}"
+    echo "Original meta.alias: ${meta.alias}"
+    echo "Using sample name: ${sample_name}"
+    
+    # Copy/rename the BAM file with custom name
+    cp ${bam} ${output_name}
+    
+    # Copy/rename the BAI file with custom name
+    if [ -f "${bai}" ]; then
+        cp ${bai} ${output_name}.bai
+    else
+        echo "No BAI file found, creating index..."
+        samtools index ${output_name}
+    fi
+    
+    echo "Successfully renamed to: ${output_name}"
+    ls -la *.bam*
+    """
+}
 
 process collectIngressResultsInDir {
     label "wf_bam_merge"
