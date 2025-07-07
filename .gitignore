@@ -9,3 +9,7 @@ template-workflow
 
 test_results*/
 work*/
+test_results_unaligned/params.json
+test_results_unaligned/execution/report.html
+test_results_unaligned/execution/timeline.html
+test_results_unaligned/execution/trace.txt

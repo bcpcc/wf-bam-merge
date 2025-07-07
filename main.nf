@@ -43,6 +43,11 @@ process SAMTOOLS_MERGE_ALIGNED {
     def output_name = "${custom_prefix}${alignment_suffix}${date_suffix}.merged.bam"
     
     """
+    echo "Original meta.alias: ${meta.alias}"
+    echo "Using sample name: ${sample_name}"
+    echo "Input BAMs (staged names): ${bams.join(' ')}"
+    echo "Output will be: ${output_name}"
+    
     # Merge aligned BAM files with samtools merge
     samtools merge \\
         -@ ${task.cpus} \\
@@ -51,6 +56,8 @@ process SAMTOOLS_MERGE_ALIGNED {
     
     # Index the merged BAM
     samtools index -@ ${task.cpus} ${output_name}
+     echo "Successfully created: ${output_name}"
+    ls -la *.merged.bam*
     """
 }
 
@@ -76,6 +83,11 @@ process SAMTOOLS_CAT_UNALIGNED {
     def output_name = "${custom_prefix}${alignment_suffix}${date_suffix}.merged.bam"
     
     """
+    echo "Original meta.alias: ${meta.alias}"
+    echo "Using sample name: ${sample_name}"
+    echo "Input BAMs (staged names): ${bams.join(' ')}"
+    echo "Output will be: ${output_name}"
+    
     # Concatenate unaligned BAM files with samtools cat
     samtools cat \\
         -o ${output_name} \\
@@ -83,6 +95,8 @@ process SAMTOOLS_CAT_UNALIGNED {
     
     # Index the merged BAM
     samtools index -@ ${task.cpus} ${output_name}
+     echo "Successfully created: ${output_name}"
+    ls -la *.merged.bam*
     """
 }
 
@@ -211,15 +225,19 @@ workflow pipeline {
     // CRITICAL FIX: Override sample names with --sample parameter
     fixed_bam_data = bam_data
         .map { meta, bam, bai, stats ->
-            def new_meta = meta.clone()
-            // If --sample parameter is provided, use it; otherwise keep original
+            def new_meta = [:]
+            new_meta.putAll(meta) // Copy all existing metadata
+            
+            // Override with --sample parameter if provided
             if (params.sample) {
                 new_meta.alias = params.sample
                 new_meta.id = params.sample
                 new_meta.barcode = params.sample
             }
+            
             // Debug output
-            log.info "Sample name: ${new_meta.alias}, BAM: ${bam.name}"
+            log.info "POST-INGRESS: Original alias='${meta.alias}', New alias='${new_meta.alias}', BAM staged as='${bam.name}'"
+            
             [new_meta, bam, bai, stats]
         }
     
@@ -292,7 +310,7 @@ workflow pipeline {
         workflow.manifest.version
     )
     
-    // Collect ingrßess results (following EPI2ME pattern)
+    // Collect ingress results (following EPI2ME pattern)
     bam_data
         | map { meta, bam, bai, stats ->
             [meta, bam ?: OPTIONAL_FILE, bai ?: OPTIONAL_FILE, stats ?: OPTIONAL_FILE]
